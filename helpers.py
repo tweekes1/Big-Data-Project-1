@@ -1,4 +1,12 @@
-# Will be used to look up the second letter of a metaedge in the edges.txt file
+# Will be used to determine the node type
+NODE_DICT = {
+    'A' : 'ANATOMY',
+    'C' : 'COMPOUND',
+    'D' : 'DISEASE',
+    'G' : 'GENE'
+}
+
+# Will be used to find the relationship between two nodes
 RELATIONSHIP_DICT = {
     'a' : 'ASSOCIATES',
     'b' : 'BINDS',
@@ -12,7 +20,7 @@ RELATIONSHIP_DICT = {
     'u' : 'UPREGULATES',
     'r' : 'RESEMBLES',
     'r>' : 'REGULATES'
-    }
+    } 
 
 '''
 Splits a string that is delimited by tabs
