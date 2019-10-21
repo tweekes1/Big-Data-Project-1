@@ -1,6 +1,7 @@
 from csv import DictReader
 import os.path
 from py2neo import *
+from helpers import *
 
 class Database:
     def __init__(self):
@@ -19,6 +20,9 @@ class Database:
         self.graph.run(query)
 
     def initialize_db(self, filename):
+        return 0
+
+    def create_graph_nodes(self, filename):
         query = '''
             USING PERIODIC COMMIT 500
             LOAD CSV WITH HEADERS FROM "file:///%s" AS LINE
@@ -28,9 +32,21 @@ class Database:
 
         self.execute_cypher(query)
 
+    def create_graph_edges(self, filename):
+        
+        return 0
+
+
+    def clear_graph(self):
+        query = '''
+            MATCH(n)
+            DELETE n
+        '''
+
+        self.execute_cypher(query)
+        self.commit()
 
 
 db = Database()
-db.initialize_db('nodes.tsv')
 
             

@@ -22,7 +22,7 @@ RELATIONSHIP_DICT = {
     'r>' : 'REGULATES'
     } 
 
-'''
+'''-
 Splits a string that is delimited by tabs
 and outputs them as a list. Keeps code 
 clean and readable
@@ -45,6 +45,7 @@ Will display what the relationship is between nodes.
 
 def determine_relationship(edge):
     source, metaedge, target = process_string(edge)
-    relationship = RELATIONSHIP_DICT[metaedge[1]]
+    relationship = RELATIONSHIP_DICT[metaedge[1:-1]]
 
     print(f'{source} {relationship} {target}')
+
