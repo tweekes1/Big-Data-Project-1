@@ -52,6 +52,41 @@ class Database:
 
         self.execute_cypher(import_query)
 
+    def create_correct_node_labels(self):
+        make_anatomy_labels = '''
+            MATCH (a:Node)
+            WHERE a.kind = 'Anatomy'
+            REMOVE a:Node
+            SET a:Anatomy
+        '''
+        
+        make_compound_labels = '''
+            MATCH (a:Node)
+            WHERE a.kind = 'Compound'
+            REMOVE a:Node
+            SET a:Compound
+        '''
+
+        make_disease_labels = '''
+            MATCH (a:Node)
+            WHERE a.kind = 'Disease'
+            REMOVE a:Node
+            SET a:Disease
+        '''
+
+        make_gene_labels = '''
+            MATCH (a:Node)
+            WHERE a.kind = 'Gene'
+            REMOVE a:Node
+            SET a:Gene
+        '''
+        
+        self.execute_cypher(make_anatomy_labels)    
+        self.execute_cypher(make_compound_labels)    
+        self.execute_cypher(make_disease_labels)    
+        self.execute_cypher(make_gene_labels)  
+        self.commit()  
+
     def clear_graph(self):
         print('CLEANING GRAPH')
         self.graph.delete_all()
@@ -60,5 +95,6 @@ db = Database()
 db.clear_graph()
 db.create_graph_nodes('nodes.tsv')
 db.create_graph_edges('edges.tsv')
+db.create_correct_node_labels()
 
             
