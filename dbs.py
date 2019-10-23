@@ -23,30 +23,42 @@ class Database:
         return 0
 
     def create_graph_nodes(self, filename):
-        query = '''
+        print('IMPORTING NODES')
+        constraint_query = '''
+            CREATE CONSTRAINT ON (a:Node) ASSERT a.id IS UNIQUE
+        '''
+
+        import_query = '''
             USING PERIODIC COMMIT 500
             LOAD CSV WITH HEADERS FROM "file:///%s" AS LINE
             FIELDTERMINATOR '\t'
-            MERGE(n:NODE {id: LINE.id, name: LINE.name, kind: LINE.kind})
+            MERGE(n:Node {id: LINE.id, name: LINE.name, kind: LINE.kind})
         ''' % (filename)
 
-        self.execute_cypher(query)
+        self.execute_cypher(constraint_query)
+        self.execute_cypher(import_query)    
+
 
     def create_graph_edges(self, filename):
-        
-        return 0
+        print('IMPORTING EDGES')
+        import_query = '''
+            USING PERIODIC COMMIT 10000
+            LOAD CSV WITH HEADERS FROM "file:///%s" AS LINE
+            FIELDTERMINATOR '\t' 
+            MATCH (A:Node{id: LINE.source})
+            MATCH (B:Node{id: LINE.target})
+            CREATE (A)-[:RELATES{type: LINE.metaedge}]->(B)
+        ''' % (filename)
 
+        self.execute_cypher(import_query)
 
     def clear_graph(self):
-        query = '''
-            MATCH(n)
-            DELETE n
-        '''
-
-        self.execute_cypher(query)
-        self.commit()
-
+        print('CLEANING GRAPH')
+        self.graph.delete_all()
 
 db = Database()
+db.clear_graph()
+db.create_graph_nodes('nodes.tsv')
+db.create_graph_edges('edges.tsv')
 
             

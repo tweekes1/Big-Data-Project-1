@@ -42,10 +42,3 @@ using @RELATIONSHIP_DICT
 @edge: a list of the values in the edges.txt file.
 Will display what the relationship is between nodes.
 '''
-
-def determine_relationship(edge):
-    source, metaedge, target = process_string(edge)
-    relationship = RELATIONSHIP_DICT[metaedge[1:-1]]
-
-    print(f'{source} {relationship} {target}')
-

@@ -1,9 +1,11 @@
 *.sh
 *.pyc
-reference.txt
+*.txt
 holder.py
 test.py
 .vscode
 import
 sandbox
 *test*
+*gene*
+__pycache__
