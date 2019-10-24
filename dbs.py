@@ -2,6 +2,7 @@ from csv import DictReader
 import os.path
 from py2neo import *
 from helpers import *
+from queries import label_queries, relationship_queries
 
 class Database:
     def __init__(self):
@@ -23,7 +24,7 @@ class Database:
         return 0
 
     def create_graph_nodes(self, filename):
-        print('IMPORTING NODES')
+        print('=================IMPORTING NODES===================')     
         constraint_query = '''
             CREATE CONSTRAINT ON (a:Node) ASSERT a.id IS UNIQUE
         '''
@@ -40,7 +41,8 @@ class Database:
 
 
     def create_graph_edges(self, filename):
-        print('IMPORTING EDGES')
+        print('=================IMPORTING EDGES===================')
+
         import_query = '''
             USING PERIODIC COMMIT 10000
             LOAD CSV WITH HEADERS FROM "file:///%s" AS LINE
@@ -52,49 +54,30 @@ class Database:
 
         self.execute_cypher(import_query)
 
-    def create_correct_node_labels(self):
-        make_anatomy_labels = '''
-            MATCH (a:Node)
-            WHERE a.kind = 'Anatomy'
-            REMOVE a:Node
-            SET a:Anatomy
-        '''
-        
-        make_compound_labels = '''
-            MATCH (a:Node)
-            WHERE a.kind = 'Compound'
-            REMOVE a:Node
-            SET a:Compound
-        '''
+    def create_node_labels(self):
+        for query in label_queries:
+            self.execute_cypher(query)
+            self.commit()         
 
-        make_disease_labels = '''
-            MATCH (a:Node)
-            WHERE a.kind = 'Disease'
-            REMOVE a:Node
-            SET a:Disease
-        '''
+    def create_relationship_labels(self):
+        for query in relationship_queries:
+            self.execute_cypher(query)
+            self.commit()
 
-        make_gene_labels = '''
-            MATCH (a:Node)
-            WHERE a.kind = 'Gene'
-            REMOVE a:Node
-            SET a:Gene
-        '''
-        
-        self.execute_cypher(make_anatomy_labels)    
-        self.execute_cypher(make_compound_labels)    
-        self.execute_cypher(make_disease_labels)    
-        self.execute_cypher(make_gene_labels)  
-        self.commit()  
+    def initialize_graph(self, node_file, edge_file):
+        print('=================CREATING GRAPH====================')
+        self.create_graph_nodes(node_file)
+        self.create_graph_edges(edge_file)
+        self.create_relationship_labels()
+        self.create_node_labels()
 
-    def clear_graph(self):
-        print('CLEANING GRAPH')
+
+    def clear_database(self):
+        print('=================CLEARING DATABASE=================')
         self.graph.delete_all()
 
 db = Database()
-db.clear_graph()
-db.create_graph_nodes('nodes.tsv')
-db.create_graph_edges('edges.tsv')
-db.create_correct_node_labels()
+db.clear_database()
+# db.initialize_graph('nodes.tsv', 'edges.tsv')
 
             
