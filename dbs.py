@@ -2,9 +2,9 @@ from csv import DictReader
 import os.path
 from py2neo import *
 from helpers import *
-from queries import label_queries, relationship_queries
+from queries import *
 
-class Database:
+class HetioDB:
     def __init__(self):
         self.graph = Graph(password='Temp1234$')
     
@@ -18,41 +18,25 @@ class Database:
         return self.graph.begin().commit
 
     def execute_cypher(self, query):
-        self.graph.run(query)
+        return self.graph.run(query)
 
     def initialize_db(self, filename):
         return 0
 
-    def create_graph_nodes(self, filename):
+    def create_graph_nodes(self):
         print('=================IMPORTING NODES===================')     
-        constraint_query = '''
-            CREATE CONSTRAINT ON (a:Node) ASSERT a.id IS UNIQUE
-        '''
+        # constraint_query = '''
+        #     CREATE CONSTRAINT ON (a:Node) ASSERT a.id IS UNIQUE
+        # '''
 
-        import_query = '''
-            USING PERIODIC COMMIT 500
-            LOAD CSV WITH HEADERS FROM "file:///%s" AS LINE
-            FIELDTERMINATOR '\t'
-            MERGE(n:Node {id: LINE.id, name: LINE.name, kind: LINE.kind})
-        ''' % (filename)
-
-        self.execute_cypher(constraint_query)
-        self.execute_cypher(import_query)    
+        # self.execute_cypher(constraint_query)
+        self.execute_cypher(node_import_query)    
 
 
-    def create_graph_edges(self, filename):
+    def create_graph_edges(self):
         print('=================IMPORTING EDGES===================')
 
-        import_query = '''
-            USING PERIODIC COMMIT 10000
-            LOAD CSV WITH HEADERS FROM "file:///%s" AS LINE
-            FIELDTERMINATOR '\t' 
-            MATCH (A:Node{id: LINE.source})
-            MATCH (B:Node{id: LINE.target})
-            CREATE (A)-[:RELATES{type: LINE.metaedge}]->(B)
-        ''' % (filename)
-
-        self.execute_cypher(import_query)
+        self.execute_cypher(edge_import_query)
 
     def create_node_labels(self):
         for query in label_queries:
@@ -71,13 +55,20 @@ class Database:
         self.create_relationship_labels()
         self.create_node_labels()
 
+    def discover_new_treatments(self):
+        print('=================FINDING NEW TREATMENTS====================')
+        print(self.execute_cypher(discover_new_treatments_query).data())
+
 
     def clear_database(self):
         print('=================CLEARING DATABASE=================')
         self.graph.delete_all()
 
-db = Database()
+db = HetioDB()
 db.clear_database()
-# db.initialize_graph('nodes.tsv', 'edges.tsv')
+db.initialize_graph('nodes.tsv', 'edges.tsv')
+input('>')
+db.discover_new_treatments()
+
 
             
