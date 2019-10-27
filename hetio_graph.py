@@ -1,11 +1,13 @@
 import os.path
+import pandas as pd
 from py2neo import *
 from queries import *
 
 class HetioGraph:
-    def __init__(self, password):
+    def __init__(self, password=None):
         self.graph = Graph(password=password)
-            
+        pd.set_option('display.max_rows', 200000)
+
     def __enter__(self):
         return self
 
@@ -19,12 +21,12 @@ class HetioGraph:
         return self.graph.run(query)
 
     def create_graph_nodes(self):
-        print('IMPORTING NODES')    
+        print('CREATING NODES')    
 
         self.execute_cypher(node_import_query)    
 
     def create_graph_edges(self):
-        print('IMPORTING EDGES')
+        print('CREATING EDGES')
         self.execute_cypher(edge_import_query)
 
     def create_node_labels(self):
@@ -37,7 +39,7 @@ class HetioGraph:
             self.execute_cypher(query)
             self.commit()
 
-    def initialize_graph(self, node_file, edge_file):
+    def initialize_graph(self):
         print('INITIALIZING GRAPH')
         self.clear_database()
         self.create_graph_nodes()
@@ -47,9 +49,11 @@ class HetioGraph:
 
     def discover_new_treatments(self):
         print('FINDING NEW TREATMENTS')
-        print(self.execute_cypher(discover_new_treatments_query).data())
+        data = self.execute_cypher(discover_new_treatments_query).data()
+
+        print(pd.DataFrame(data))
 
     def clear_database(self):
-        print('CLEARING DATABASE')
+        print('CLEARING GRAPH')
         self.graph.delete_all()
         
