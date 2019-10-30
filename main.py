@@ -26,6 +26,7 @@ class Terminal(Cmd):
             self.graph_db.initialize_graph()
             print('The Hetio Database is initialized')
             self.is_initialized = True
+            self.help()
             return
         
     def do_discover(self, args):
@@ -47,8 +48,9 @@ class Terminal(Cmd):
             print('The HetioDB is not initialized')
 
     def default(self, args):
-        if args is not 'init':
+        if args is not 'init' and not self.is_initialized:
             print('The HetioDB is not initialized')
+            print('Enter \'init\' ')
         else:
             print('Enter \'discover\' to find all the hidden treatmnents')
             print('Enter \'id\' <DISEASE_ID> to find all the information about a disease')
@@ -60,6 +62,11 @@ class Terminal(Cmd):
 
     def emptyline(self):
         return 
+
+    def help(self):
+        print('Enter \'discover\' to find all the hidden treatmnents')
+        print('Enter \'id\' <DISEASE_ID> to find all the information about a disease')
+        print('Enter \'name\' <DISEASE_NAME> to find all the information about a disease')
 
 term = Terminal()
 term.cmdloop()

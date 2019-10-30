@@ -132,18 +132,18 @@ localizes_rel_query = '''
 
 discover_new_treatments_query = '''
     MATCH (new_treatment:Compound)-[:UPREGULATES]->(G:Gene)<-[:DOWNREGULATES]-(:Anatomy)<-[:LOCALIZES]-(new_disease:Disease)
-    OPTIONAL MATCH (similar)-[:RESEMBLES]-(new_treatment)
+    MATCH (similar)-[:RESEMBLES]-(new_treatment)
     WHERE similar IS NOT NULL
     WITH collect(new_treatment) + collect(similar)  AS nodes, new_disease.name as Disease
     UNWIND nodes as treatments
     RETURN treatments.name as Treatment, Disease 
     UNION
     MATCH (new_treatment:Compound)-[:DOWNREGULATES]->(G:Gene)<-[:UPREGULATES]-(:Anatomy)<-[:LOCALIZES]-(new_disease:Disease)
-    OPTIONAL MATCH (similar)-[:RESEMBLES]-(new_treatment)
+    MATCH (similar)-[:RESEMBLES]-(new_treatment)
     WHERE similar IS NOT NULL
     WITH collect(new_treatment) + collect(similar)  AS nodes, new_disease.name as Disease
     UNWIND nodes as treatments
-    RETURN DISTINCT treatments.name as Treatment, Disease 
+    RETURN DISTINCT treatments.name as Treatment, Disease
 '''
 
 label_queries = [anatomy_labels_query, compound_labels_query, 

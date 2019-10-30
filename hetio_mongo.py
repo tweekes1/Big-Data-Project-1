@@ -11,7 +11,6 @@ Provides mongo db functionality to store all the items in the nodes.tsv file as 
 uses the edges.tsv file to update the 'Disease' documents to appending the IDs to the 
 associates, localizes, palliates, and treats lists. 
 '''
-
 class HetioMongo():
 
     def __init__(self, nodes_file=None, edges_file=None):
@@ -61,7 +60,6 @@ class HetioMongo():
     param just incase for alternative testing.
 
     Method that is used to append the id of an entity to a one of a Disease's relationship lists.
-
     '''
     def create_properties(self, filename):
         print('CREATING PROPERTIES')

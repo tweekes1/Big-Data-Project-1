@@ -14,7 +14,6 @@ relationships. The class is responsible for creating the nodes and relationships
 aswell as executing cypher queries against the database. Uses default socket to 
 connect to neo4j. All cypher queries are contained in the 'queries.py' file
 '''
-
 class HetioGraph:
     def __init__(self, user=None, password=None):
         self.graph = Graph(user=user, password=password)
