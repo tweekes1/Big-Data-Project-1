@@ -1,6 +1,6 @@
 import os.path
 import pandas as pd
-from py2neo import *
+from py2neo import Graph
 from queries import *
 
 '''

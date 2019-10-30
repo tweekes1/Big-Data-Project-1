@@ -1,3 +1,5 @@
+# File is locaed in $NEO4J_HOME/import
+# To change nodes that are imported changes the file
 node_import_query = '''
     USING PERIODIC COMMIT 500
     LOAD CSV WITH HEADERS FROM "file:///nodes.tsv" AS LINE
@@ -5,6 +7,8 @@ node_import_query = '''
     MERGE(n:Node {id: LINE.id, name: LINE.name, kind: LINE.kind})
 ''' 
 
+# File is locaed in $NEO4J_HOME/import
+# To change edges that are imported changes the file
 edge_import_query = '''
     USING PERIODIC COMMIT 10000
     LOAD CSV WITH HEADERS FROM "file:///edges.tsv" AS LINE
