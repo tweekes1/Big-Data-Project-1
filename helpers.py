@@ -1,4 +1,8 @@
-# Simple function to make dictionary printing nicer
+'''
+@param dictionary: a dictionary to be printed.
+
+Function that will display a disctionary in a nicer fashion
+'''
 def pretty_print_dictionary(dictionary):
     for key in dictionary.keys():
         print(str(key) + ':') 
